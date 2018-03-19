@@ -2,21 +2,30 @@ package com.dmytryk.kotlincounter
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.dmytryk.kotlincounter.CounterActivityFragment.OnCounterScoreChangeListener
 
 import kotlinx.android.synthetic.main.activity_counter.*
 
-class CounterActivity : AppCompatActivity() {
+class CounterActivity : AppCompatActivity(), OnCounterScoreChangeListener{
+
+    private lateinit var counterData: CounterData
+
+    override fun onCounterScoreChange(name: String, newScore: Int) {
+        counterData = CounterData(name, newScore)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_counter)
         setSupportActionBar(toolbar)//test this
 
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.frameContainer, CounterActivityFragment()).commit()
+
+
+
 
     }
-
-
-
 
 //
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -1,14 +1,31 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fragmentCounterList"
     tools:context="com.dmytryk.kotlincounter.CounterListFragment">
 
-    <ListView
-        android:id="@+id/recycler_view_counters"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/counter_list_item"/>
+
+
+        <ListView
+            android:id="@+id/listViewCounters"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/counter_list_item"/>
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_add_circle_outline_white_24dp"
+            app:fabSize="normal"
+            tools:layout_editor_absoluteX="164dp"
+            tools:layout_editor_absoluteY="439dp" />
+
 
 </FrameLayout>
