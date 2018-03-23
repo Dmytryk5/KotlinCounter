@@ -1,6 +1,9 @@
 package com.dmytryk.kotlincounter
 
 import android.content.Context
+import android.support.constraint.ConstraintLayout
+import android.support.design.widget.Snackbar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +13,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 
 
-class CounterListAdapter(val context: Context,private val counterList:List<CounterData> ):
+class CounterListAdapter(val context: Context, val counterList:MutableList<CounterData> ):
         BaseAdapter(){
 
     private val inflater:LayoutInflater
@@ -31,11 +34,25 @@ class CounterListAdapter(val context: Context,private val counterList:List<Count
         view?.findViewById<TextView>(R.id.listCounterNameTv)?.text = counter.counterName
         view?.findViewById<TextView>(R.id.listScoreTv)?.text = counter.score.toString()
         view?.findViewById<ImageButton>(R.id.buttonDelete)?.setOnClickListener {
+
+            counterList.removeAt(position)
+            Snackbar.make(view!!, R.string.counter_deleted, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo, View.OnClickListener {
+                        Log.d("SNACK", "undo clicked / position = $position")
+                        counterList.add(position, counter)
+                        this.notifyDataSetChanged()
+                    }).show()
+
+            notifyDataSetChanged()
             //todo item deletion
         }
 
-        return view as View
+        view?.findViewById<ConstraintLayout>(R.id.counterListItemLayout)?.setOnClickListener {
 
+            //todo on layout click go to counterActivityFragment
+        }
+
+        return view as View
 
     }
 

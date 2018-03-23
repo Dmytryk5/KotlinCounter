@@ -5,5 +5,7 @@
     <string name="plus">+</string>
     <string name="minus">-</string>
     <string name="reset">Reset</string>
+    <string name="counter_deleted">Counter removed</string>
+    <string name="undo">Undo</string>
 
 </resources>
