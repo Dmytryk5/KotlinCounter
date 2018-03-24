@@ -1,10 +1,17 @@
 package com.dmytryk.kotlincounter
 
+import android.view.WindowManager.LayoutParams
+import android.app.Dialog
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.EditText
 import kotlinx.android.synthetic.main.fragment_counter_list.*
 
 
@@ -16,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_counter_list.*
  * Use the [CounterListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CounterListFragment : Fragment() {
+class CounterListFragment : Fragment(){
 
     // TODO: Rename and change types of parameters
     private var mParam1: String? = null
@@ -61,6 +68,45 @@ class CounterListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CounterListAdapter(context, countersList)
         listViewCounters.adapter = adapter
+        adapter.setOnLayoutClickListener(object: CounterListAdapter.OnLayoutClickListener{
+
+            override fun onLayoutClick(currentCounter: CounterData) {
+
+                Log.d("CALLBACK", "onLayoutClick in CounterListFragment")
+                val fragmentSwitchTo = CounterActivityFragment()
+
+                val fragmentTransaction = fragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.frameContainer, fragmentSwitchTo).commit()
+
+            }
+
+        })
+
+        fab.setOnClickListener {
+            val dialog = Dialog(context)
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.add_counter_dialog_layout)
+            val buttonAdd = dialog.findViewById<Button>(R.id.buttonAdd)
+            val buttonCancel = dialog.findViewById<Button>(R.id.buttonCancel)
+            val editTextNewCounterName = dialog.findViewById<EditText>(R.id.editTextNewCounterName)
+
+            buttonAdd.setOnClickListener({
+                var newName: String = editTextNewCounterName.text.toString()
+                if (newName == ""){
+                    newName = "Counter"
+                }
+                adapter.counterList.add(CounterData(newName, 0))
+                adapter.notifyDataSetChanged()
+                dialog.dismiss()
+            })
+
+            buttonCancel.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.window.setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+            dialog.show()
+        }
+
     }
 
 

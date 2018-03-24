@@ -13,15 +13,17 @@ import android.widget.ImageButton
 import android.widget.TextView
 
 
-class CounterListAdapter(val context: Context, val counterList:MutableList<CounterData> ):
+class CounterListAdapter(context: Context, val counterList:MutableList<CounterData> ):
         BaseAdapter(){
 
-    private val inflater:LayoutInflater
+    private val inflater:LayoutInflater =
+            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    private lateinit var callback : OnLayoutClickListener
 
-    init {
-        inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
+    fun setOnLayoutClickListener(listener : OnLayoutClickListener){
+        callback = listener
     }
+
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = convertView
@@ -44,12 +46,17 @@ class CounterListAdapter(val context: Context, val counterList:MutableList<Count
                     }).show()
 
             notifyDataSetChanged()
-            //todo item deletion
+
         }
 
         view?.findViewById<ConstraintLayout>(R.id.counterListItemLayout)?.setOnClickListener {
+            Log.d("LAYOUT", "layout $position clicked")
 
-            //todo on layout click go to counterActivityFragment
+            //check if callback not null without using {?}
+            if (::callback.isInitialized) {
+                callback.onLayoutClick(counterList[position])
+            }
+
         }
 
         return view as View
@@ -72,4 +79,8 @@ class CounterListAdapter(val context: Context, val counterList:MutableList<Count
         return counterList.size
     }
 
+
+    interface OnLayoutClickListener{
+        fun onLayoutClick(currentCounter:CounterData)
+    }
 }

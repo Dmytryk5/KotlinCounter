@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.fragment_counter.*
 
 class CounterActivityFragment : Fragment() {
 
-    private val counter:CounterData = CounterData("Counter", 0)
+    private var counter:CounterData = CounterData("Counter", 0)
     private lateinit var callback: OnCounterScoreChangeListener
 
     override fun onAttach(context: Context?) {
@@ -28,6 +28,10 @@ class CounterActivityFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_counter, container, false)
+    }
+
+    fun setCounter(newCounter:CounterData){
+        this.counter = newCounter
     }
 
     private fun setScore(){
