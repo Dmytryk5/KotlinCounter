@@ -12,8 +12,13 @@ import kotlinx.android.synthetic.main.fragment_counter.*
 
 class CounterActivityFragment : Fragment() {
 
-    private var counter:CounterData = CounterData("Counter", 0)
+    private lateinit var counter:CounterData
     private lateinit var callback: OnCounterScoreChangeListener
+    private val counterKey: String = "counter_key"
+//
+//    private var counterScore : Int = counter.score
+//    private var counterName : String = counter.counterName
+
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -27,15 +32,26 @@ class CounterActivityFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        if (savedInstanceState == null) {
+            setCounter(CounterData("Standard counter", 2))
+        } else {
+            setCounter(savedInstanceState.getParcelable(counterKey))
+//            counter =
+//            setScore()
+        }
         return inflater.inflate(R.layout.fragment_counter, container, false)
     }
 
     fun setCounter(newCounter:CounterData){
         this.counter = newCounter
+//        this.counterName = counter.counterName
+//        this.counterScore = counter.score
     }
 
     private fun setScore(){
 
+        tvCounterName.text = counter.counterName
         tvCounterScore.text = counter.score.toString()
         callback.onCounterScoreChange(counter.counterName, counter.score)
     }
@@ -43,8 +59,13 @@ class CounterActivityFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvCounterName.text = counter.counterName
-        tvCounterScore.text = counter.score.toString()
+
+
+
+//
+//        tvCounterName.text = counter.counterName
+//        tvCounterScore.text = counter.score.toString()
+        setScore()
 //        fab.setImageDrawable(resources.getDrawable(R.drawable.ic_view_list_white_24dp))
 //
         fab.setOnClickListener {
@@ -76,6 +97,24 @@ class CounterActivityFragment : Fragment() {
 
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putParcelable(counterKey, counter)
+
+    }
+
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        super.onActivityCreated(savedInstanceState)
+//        if (savedInstanceState != null) {
+//            setCounter(savedInstanceState.getParcelable(counterKey))
+////            counter =
+//            setScore()
+//        }
+
+//        counter = savedInstanceState?.getParcelable(counterKey)
+
+//    }
 
     interface OnCounterScoreChangeListener{
         fun onCounterScoreChange(name: String, newScore: Int)

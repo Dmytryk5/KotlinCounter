@@ -1,5 +1,8 @@
 package com.dmytryk.kotlincounter
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-data class CounterData(val counterName: String, var score:Int)
+@Parcelize
+data class CounterData(val counterName: String, var score:Int):Parcelable
 

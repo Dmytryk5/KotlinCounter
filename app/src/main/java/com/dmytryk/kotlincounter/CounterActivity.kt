@@ -17,11 +17,12 @@ class CounterActivity : AppCompatActivity(), OnCounterScoreChangeListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_counter)
-        setSupportActionBar(toolbar)//test this
+        setSupportActionBar(toolbar)
 
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.frameContainer, CounterActivityFragment()).commit()
-
+        if (savedInstanceState == null) {//fixes rotation problem
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.frameContainer, CounterActivityFragment()).commit()
+        }
 
 
 
