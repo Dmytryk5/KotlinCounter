@@ -2,9 +2,8 @@ package com.dmytryk.kotlincounter
 
 import android.view.WindowManager.LayoutParams
 import android.app.Dialog
+import android.app.Fragment
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,19 +14,7 @@ import android.widget.EditText
 import kotlinx.android.synthetic.main.fragment_counter_list.*
 
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [CounterListFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [CounterListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CounterListFragment : Fragment(){
-
-    // TODO: Rename and change types of parameters
-    private var mParam1: String? = null
-    private var mParam2: String? = null
 
     private val countersList: MutableList<CounterData> =
             mutableListOf(
@@ -45,17 +32,6 @@ class CounterListFragment : Fragment(){
                     CounterData("Днів без алкоголю", 1))
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (arguments != null) {
-            mParam1 = arguments.getString(ARG_PARAM1)
-            mParam2 = arguments.getString(ARG_PARAM2)
-        }
-
-    }
-
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -66,24 +42,31 @@ class CounterListFragment : Fragment(){
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = CounterListAdapter(context, countersList)
+        val adapter = CounterListAdapter(this.activity, countersList)
         listViewCounters.adapter = adapter
         adapter.setOnLayoutClickListener(object: CounterListAdapter.OnLayoutClickListener{
 
             override fun onLayoutClick(currentCounter: CounterData) {
 
                 Log.d("CALLBACK", "onLayoutClick in CounterListFragment")
-                val fragmentSwitchTo = CounterActivityFragment()
+
+
+                val fragmentSwitchTo = CounterActivityFragment.newInstance(currentCounter)
+//
+//                val arguments = Bundle()
+//                arguments.putString("counterName", currentCounter.counterName)
+//                arguments.putInt("counterScore", currentCounter.score)
+//
+//                fragmentSwitchTo.arguments = arguments
 
                 val fragmentTransaction = fragmentManager.beginTransaction()
                 fragmentTransaction.replace(R.id.frameContainer, fragmentSwitchTo).commit()
 
             }
-
         })
 
         fab.setOnClickListener {
-            val dialog = Dialog(context)
+            val dialog = Dialog(activity)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.add_counter_dialog_layout)
             val buttonAdd = dialog.findViewById<Button>(R.id.buttonAdd)
@@ -107,31 +90,41 @@ class CounterListFragment : Fragment(){
             dialog.show()
         }
 
+
+        if (arguments != null) {
+            val counterName = arguments.getString(UPDATED_COUNTER_NAME)
+            val counterScore = arguments.getInt(UPDATED_COUNTER_SCORE)
+
+            val counter = CounterData(counterName, counterScore)
+            var update = false
+            countersList.forEach {
+                if (it.counterName == counterName) {
+                    it.score = counterScore
+                    update = true
+                    return
+                }
+            }
+
+            if (!update){
+                countersList.add(counter)
+            }
+        }
+
     }
 
 
 
 
     companion object {
-        // TODO: Rename parameter arguments, choose names that match
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-        private val ARG_PARAM1 = "param1"
-        private val ARG_PARAM2 = "param2"
+        private const val UPDATED_COUNTER_NAME = "updatedCounterName"
+        private const val UPDATED_COUNTER_SCORE = "updatedCounterScore"
 
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CounterListFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        fun newInstance(param1: String, param2: String): CounterListFragment {
+        fun newInstance(currentCounter: CounterData): CounterListFragment {
             val fragment = CounterListFragment()
             val args = Bundle()
-            args.putString(ARG_PARAM1, param1)
-            args.putString(ARG_PARAM2, param2)
+            args.putString(UPDATED_COUNTER_NAME, currentCounter.counterName)
+            args.putInt(UPDATED_COUNTER_SCORE, currentCounter.score)
             fragment.arguments = args
             return fragment
         }

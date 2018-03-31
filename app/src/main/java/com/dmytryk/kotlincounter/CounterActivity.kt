@@ -14,14 +14,28 @@ class CounterActivity : AppCompatActivity(), OnCounterScoreChangeListener{
         counterData = CounterData(name, newScore)
     }
 
+    override fun onCounterListCalled() {
+
+        val fragmentSwitchTo = CounterListFragment.newInstance(counterData)
+
+
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frameContainer, fragmentSwitchTo).commit()
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_counter)
         setSupportActionBar(toolbar)
 
         if (savedInstanceState == null) {//fixes rotation problem
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.frameContainer, CounterActivityFragment()).commit()
+            val counter = CounterData("Counter", 0)
+            val fragment = CounterActivityFragment.newInstance(counter)
+
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.frameContainer, fragment).commit()
+
         }
 
 
